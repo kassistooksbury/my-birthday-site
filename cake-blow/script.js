@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Candle logic
   function updateCandleCount() {
     const active = candles.filter(c => !c.classList.contains("out")).length;
-    candleCountDisplay.textContent = active;
+    if (candleCountDisplay) candleCountDisplay.textContent = active;
   }
   function addCandle(left, top) {
     const candle = document.createElement("div");
