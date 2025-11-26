@@ -248,24 +248,33 @@ html, body { height: 100%; }
 body { overflow-x: hidden; }
 .cake { touch-action: manipulation; }
 
-/* Responsive cake scaling for small screens */
+/* Responsive adjustments */
 @media (max-width: 480px) {
+  /* Keep cake centered with original absolute centering */
   .cake {
-    transform: translate(-50%, 0) scale(0.8);
-    transform-origin: center top;
-    top: 45%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -70px;
+    margin-left: -125px;
+    transform: scale(0.95); /* mild scale only */
+    transform-origin: center center;
   }
+  /* Pin cat so it doesn't push the cake */
   .birthday-cat {
-    right: 8px;
-    top: 12px;
-    transform: translateX(160px);
-    animation-duration: 1.1s;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    transform: none;
+    animation: fadeInCat 0.9s ease-out 0.3s forwards;
+    z-index: 30;
   }
-  .birthday-cat img { width: 160px; }
-  .candle-count-display { font-size: 16px; margin-top: 100px; }
+  .birthday-cat img { width: 150px; }
+  .candle-count-display { font-size: 16px; margin-top: 90px; }
 }
 
 @media (min-width: 481px) and (max-width: 768px) {
-  .cake { transform: translate(-50%, 0) scale(0.9); transform-origin: center top; top: 48%; }
+  .cake { transform: scale(0.98); transform-origin: center center; }
+  .birthday-cat { position: fixed; right: 16px; top: 16px; }
   .birthday-cat img { width: 190px; }
 }

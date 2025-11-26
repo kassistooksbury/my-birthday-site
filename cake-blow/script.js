@@ -225,3 +225,26 @@ function triggerConfetti() {
   const maxDuration = 7.5; // approximate
   setTimeout(()=>{ container.classList.add('fade'); setTimeout(()=>{ container.remove(); }, 1200); }, maxDuration*1000);
 }
+
+// Mobile fallback: tap a candle to blow it out if mic isn't available
+function enableTapToBlowFallback() {
+  const supportsTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (!supportsTouch) return;
+  document.addEventListener('pointerdown', (e) => {
+    const target = e.target;
+    const candleEl = target.closest && target.closest('.candle');
+    if (!candleEl) return;
+    // If analyser not ready or mic blocked, allow manual blow
+    const micReady = !!analyser;
+    if (!micReady) {
+      if (!candleEl.classList.contains('out')) {
+        candleEl.classList.add('out');
+        updateCandleCount();
+        const anyCandles = candles.length > 0;
+        const allOut = anyCandles && candles.every(c => c.classList.contains('out'));
+        if (allOut && !confettiTriggered) { triggerConfetti(); confettiTriggered = true; }
+      }
+    }
+  });
+}
+enableTapToBlowFallback();
