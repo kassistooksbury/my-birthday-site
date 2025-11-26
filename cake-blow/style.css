@@ -243,6 +243,29 @@ body { background: #FDF8F0; }
   100% { top: 110vh; }
 }
 
-@media (max-width:600px){
-  .birthday-cat { right: 10px; top: 20px; transform: translateX(180px); }
+/* Mobile-friendly layout adjustments */
+html, body { height: 100%; }
+body { overflow-x: hidden; }
+.cake { touch-action: manipulation; }
+
+/* Responsive cake scaling for small screens */
+@media (max-width: 480px) {
+  .cake {
+    transform: translate(-50%, 0) scale(0.8);
+    transform-origin: center top;
+    top: 45%;
+  }
+  .birthday-cat {
+    right: 8px;
+    top: 12px;
+    transform: translateX(160px);
+    animation-duration: 1.1s;
+  }
+  .birthday-cat img { width: 160px; }
+  .candle-count-display { font-size: 16px; margin-top: 100px; }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .cake { transform: translate(-50%, 0) scale(0.9); transform-origin: center top; top: 48%; }
+  .birthday-cat img { width: 190px; }
 }

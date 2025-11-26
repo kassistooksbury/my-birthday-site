@@ -1,38 +1,24 @@
 // Define YouTube initialization early to avoid missing the API callback
-let ytPlayer; // global player reference
-const VIDEO_ID = "4sZmPHJPvZE";
-let playerReady = false;
-let pendingUnmute = false;
-let unmuted = false;
+// Remove YouTube-related globals
+// let ytPlayer; const VIDEO_ID = "4sZmPHJPvZE"; let playerReady = false; let pendingUnmute = false; let unmuted = false;
 let confettiTriggered = false; // track confetti state
 
-function initYouTubePlayer() {
-  if (ytPlayer) return;
-  const container = document.getElementById('youtubePlayerContainer');
-  if (!container) return;
-  if (!(window.YT && window.YT.Player)) return;
-  ytPlayer = new YT.Player('youtubePlayerContainer', {
-    height: '0', width: '0', videoId: VIDEO_ID,
-    playerVars: { autoplay: 1, mute: 1, controls: 0, rel: 0, modestbranding: 1, playsinline: 1 },
-    events: {
-      onReady: () => {
-        playerReady = true;
-        try { ytPlayer.mute(); } catch(e){}
-        try { ytPlayer.playVideo(); } catch(e){}
-        if (pendingUnmute) performUnmute();
-      },
-      onStateChange: (e) => {
-        if (e.data === 0) { // ended
-          try { ytPlayer.playVideo(); } catch(_){}
-        }
-      }
-    }
-  });
-}
-// Assign global callback BEFORE DOMContentLoaded so API can call it
-window.onYouTubeIframeAPIReady = function() { initYouTubePlayer(); };
-
 document.addEventListener("DOMContentLoaded", function () {
+  // Set up local audio instead of YouTube
+  const bgAudio = document.getElementById('bgMusic') || new Audio('cake-blow/music.mp3');
+  bgAudio.loop = true;
+  try { bgAudio.volume = 0.8; } catch(_){}
+  function tryPlay() { return bgAudio.play(); }
+  // Aggressive autoplay retries: initial, periodic, on visibility change, and after mic permission
+  let autoplaySucceeded = false;
+  function attemptAutoplay() {
+    if (autoplaySucceeded) return;
+    tryPlay().then(()=>{ autoplaySucceeded = true; }).catch(()=>{});
+  }
+  attemptAutoplay();
+  const retryTimer = setInterval(()=>{ if (!autoplaySucceeded) attemptAutoplay(); else clearInterval(retryTimer); }, 1200);
+  document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState === 'visible') attemptAutoplay(); });
+
   const cake = document.querySelector(".cake");
   const candleCountDisplay = document.getElementById("candleCount");
   let candles = [];
@@ -40,25 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let analyser;
   let microphone;
 
-  // If API already loaded before DOMContentLoaded, ensure player is initialized
-  if (window.YT && window.YT.Player) initYouTubePlayer();
-
-  function performUnmute(){
-    if (!playerReady) { pendingUnmute = true; return; }
-    if (unmuted) return;
-    try { ytPlayer.unMute(); } catch(e){}
-    try { ytPlayer.setVolume(100); } catch(e){}
-    try { ytPlayer.playVideo(); } catch(e){}
-    unmuted = true;
-  }
-  function unmuteAndEnsurePlaying(){ performUnmute(); }
-
-  // First user gesture (anywhere) will unmute
-  ['pointerdown','keydown','touchstart'].forEach(evt => {
-    document.addEventListener(evt, () => { unmuteAndEnsurePlaying(); }, { once:true, passive:true });
-  });
-
-  // Microphone permission also counts as gesture; unmute when granted
+  // Microphone permission also counts as gesture; retry autoplay when granted
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -67,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
       microphone.connect(analyser);
       analyser.fftSize = 256;
       setInterval(blowOutCandles, 200);
-      unmuteAndEnsurePlaying();
+      attemptAutoplay();
     }).catch(err => { console.log("Unable to access microphone: " + err); });
   }
 
@@ -124,20 +92,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   }
-
-  // Fallback iframe if API blocked
-  setTimeout(() => {
-    if (!ytPlayer) {
-      const container = document.getElementById('youtubePlayerContainer');
-      if (container && !container.querySelector('iframe')) {
-        const iframe = document.createElement('iframe');
-        iframe.width='0'; iframe.height='0';
-        iframe.src=`https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1&mute=1&playsinline=1&controls=0`;
-        iframe.allow='autoplay';
-        container.appendChild(iframe);
-      }
-    }
-  }, 5000);
 
   // Birthday cat GIF loader fallback (enhanced debugging)
   const catImg = document.getElementById('birthdayCatGif');

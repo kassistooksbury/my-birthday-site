@@ -34,13 +34,14 @@
         loading="eager"
       />
     </figure>
-    <div
-      id="youtubePlayerContainer"
-      style="position:fixed;bottom:0;right:0;width:1px;height:1px;opacity:0;"
-      aria-label="YouTube player container"
-    ></div>
-    <!-- Load YouTube IFrame API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- Replace YouTube with local audio -->
+    <audio
+      id="bgMusic"
+      src="cake-blow/Happy%20Birthday!%20-%20Jazzy%20Piano%20Arrangement%20by%20Jonny%20May.mp3"
+      loop
+      preload="auto"
+      aria-hidden="true"
+    ></audio>
     <script src="cake-blow/script.js"></script>
   </body>
 </html>
