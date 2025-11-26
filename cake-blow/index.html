@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Candle Blow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+  </head>
+  <body>
+    <div class="candle-count-display">
+      Candles on the Cake: <span id="candleCount">0</span>
+    </div>
+    <div class="cake">
+      <div class="plate"></div>
+      <div class="layer layer-bottom"></div>
+      <div class="layer layer-middle"></div>
+      <div class="layer layer-top"></div>
+      <div class="icing"></div>
+      <div class="drip drip1"></div>
+      <div class="drip drip2"></div>
+      <div class="drip drip3"></div>
+    </div>
+    <!-- Provide a local christina-birthday-cat.gif in this folder; fallback message shows if missing -->
+    <figure class="birthday-cat" aria-label="birthday cat gif">
+      <img
+        id="birthdayCatGif"
+        src="cute-cat-birthday-gif-card-1 (1).gif"
+        alt="birthday cat holding cake"
+        loading="eager"
+      />
+    </figure>
+    <div
+      id="youtubePlayerContainer"
+      style="position:fixed;bottom:0;right:0;width:1px;height:1px;opacity:0;"
+      aria-label="YouTube player container"
+    ></div>
+    <!-- Load YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
